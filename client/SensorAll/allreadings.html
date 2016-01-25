@@ -1,0 +1,64 @@
+<!-- <head>
+    <title>server-A</title>
+</head>
+
+<body>
+
+</body>
+
+<template name="allreadings">
+  <div class="container">
+    <div class="well">
+    Server A  All sensor readings
+ 
+    <a href="#" class="insert">Insert</a>
+    <a href="#" class="delete">Delete</a>
+    <div class="well">
+    {{#each tests}}
+        {{> testItem}}
+    {{/each}}
+    </div>
+    </div>
+
+    <br>
+    <br>
+    
+
+    <div class="well ">
+       <div class="row"> 
+      <div class="col-md-6 well">
+       
+        {{#each sensors}}
+        {{> testsensor}}
+        {{/each}}
+       
+      </div> 
+       <div class="col-md-6 well">
+        <h3> Last 6 readings: </h3>
+         
+        {{#each sensorslist}}
+        {{> listsensor}}
+        {{/each}}
+      
+      </div> 
+      
+    </div>
+    <div class="row">
+        <button type="button" id="home" class="btn btn-success pull-right">Back</button>  
+    </div>
+    </div>
+
+    <div class="well ">
+    {{> lineChartTemp}}
+    </div>
+
+    <div class="well ">
+    {{> lineChartHumidity}}
+    </div>
+
+  
+     
+ </div>    
+</template>
+
+ -->
