@@ -1,14 +1,20 @@
+App.accessRule('*.google.com/*');
+App.accessRule('*.googleapis.com/*');
+App.accessRule('*.gstatic.com/*');
+
 App.info({
-  name: 'Internet of Things Meteor-Raspberry Pi project',
+  name: 'Smartag',
   description: 'IoT Smart House based on DDP protocol and Meteor server',
   author: 'Atanas Antonov',
   email: 'eferwe@gmail.com',
-  website: 'http://testddp1.meteor.com',
+  website: 'http://testddp.meteor.com',
   version: '0.1.5'
 });
 
 // App.accessRule('http://treatment.meteor.com');
 App.accessRule('*');
+
+
 
 App.icons({
   // iOS
