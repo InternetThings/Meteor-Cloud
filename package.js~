@@ -1,0 +1,20 @@
+Package.onUse( function(api) {
+  api.versionsFrom("1.2.0.1");
+
+  api.use('accounts-base');
+  api.use('check');
+  api.use(['coffeescript', 'underscore']);
+  api.use('mongo');
+
+  api.use(['deps', 'jquery'], 'client');
+
+  api.use('mizzao:timesync@0.3.4');
+
+  api.addFiles('monitor.coffee', 'client');
+  api.addFiles('status.coffee', 'server');
+
+  api.export('UserStatus'); // on both
+
+  api.export('MonitorInternals', 'client', {testOnly: true});
+  api.export('StatusInternals', 'server', {testOnly: true});
+});

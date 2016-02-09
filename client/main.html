@@ -1,103 +1,98 @@
-<head>
-    <title>server-A</title>
-</head>
+<!--  <head>
+    <title>Smartag</title>
+</head> -->
 
-<body>
-<!-- {{> testList }} -->
-</body>
 
-<template name="testList">
-  <div class="container">
-    <div class="well">
-    Server A
 
-    <a href="#" class="insert">Insert</a>
-    <a href="#" class="delete">Delete</a>
-    <div class="well">
-    {{#each tests}}
-        {{> testItem}}
-    {{/each}}
-    </div>
-    </div>
 
-    <br>
-    <br>
-      
-    <div class="well ">
-    {{#each controls}}
-        {{> testled}}
-    {{/each}}
-    </div>
+<template name="main">
+  
 
-    <div class="well ">
-       <div class="row"> 
-      <div class="col-md-6 well">
-        <!-- <div class="well">  -->
-        {{#each sensors}}
-        {{> testsensor}}
-        {{/each}}
-        <!-- </div>     -->
-      </div> 
-       <div class="col-md-6 well">
-        <h3> Last 6 readings: </h3>
-         <!-- <div class="well">  -->
-        {{#each sensorslist}}
-        {{> listsensor}}
-        {{/each}}
-        <!-- </div>     -->
-      </div> 
-      
-    </div>
-    <div class="row">
-        <!-- <button type="button" id="allstats" class="btn btn-success pull-right">All Readings</button>   -->
-    </div>
-    </div>
-
-    <div class="well ">
-    {{> lineChartTemp}}
-    </div>
-
-    <div class="well ">
-    {{> lineChartHumidity}}
-    </div>
-
-    <!-- <div class="well ">
-    {{> humidityTemp}}
-    </div> -->
-     
- </div>    
-</template>
-
-<template name="testItem">
-    <li>
-        {{name}}, {{author}}, {{status}}
-    </li>
-</template>
-
-<template name="testled"> 
-     
-         
-            <label for="{{name}}">{{name}} </label>
-        <button type="button" name="{{name}}" id="{{name}}" class="btn {{#if checked}}btn-success{{else}}btn-danger{{/if}}">{{#if checked}}LED ON{{else}}LED OFF{{/if}}</button>
-        
-     
-</template>
-
-<template name="testsensor"> 
-         
-            <h3>Sensor: {{name}}</h3>
-            <br>
-            <h4>Humidity: {{humidity}}%</h4>
-            <br>
-            <h4>Temperature: {{temperature}}C</h4>
-            <br>
-            <h4>Time: {{time}} </h4>
-         
-</template>
-
-<template name="listsensor">
+ 
+                                                                                       
+<div id="wrapper" class="{{menuOpen}} {{cordova}}">
+  
     
-    <li>
-        <h6>  humidity: {{humidity}} temperature: {{temperature}} time: {{time}}  </h6>
-    </li>
+    <div id="sidebar-wrapper">
+      <ul class="sidebar-nav">
+        <li class="sidebar-brand wiped">
+                    <a href="/">
+                        Smartag
+                    </a>
+                </li>
+  
+
+
+
+        <div class="list-todos">
+            {{#each devices}}
+                  <li class="wiped facebook"> <a class="list-todo {{activePlanClass}} hashroot" title="{{macAddr}}"><img class="radius" src="/img/devicepic.png"> {{macAddr}} </a></li> 
+                  <!-- <li class="wiped facebook"> <a class="list-todo {{activePlanClass}} hashroot" title="{{macAddr}}"> {{name}} </a></li>   -->         
+               
+            {{/each}}
+            <li class="wiped facebook"><a href="{{pathFor 'landing'}}" class="list-todo {{activePlanClass}}">Info Page</a></li> 
+
+        </div>
+      </ul>
+   </div>
+
+
+  {{#unless connected}}
+      <div class="notifications">
+        <div class="notification">
+          <span class="icon-sync"></span>
+          <div class="meta">
+            <div class="title-notification">Trying to connect</div>
+            <div class="description">There seems to be a connection issue</div>
+          </div>
+        </div>
+      </div>
+    {{/unless}}
+    
+    <div class="content-overlay"></div>
+        
+       <div id="page-content-wrapper">
+      <nav class="navbar navbar-inverse navbar-fixed-top">
+          <div class="container-fluid1">
+              <a href="#menu-toggle" class="menu-toggle" id="menu-toggle"><i class="fa fa-bars"></i></a>
+             
+              
+             <!-- {{#if userName}}
+               <a class="list-todo  hashrootnav" title="{{userName}}"><img class="radius radiusnav img-responsive" src="{{userPic}}"> {{userName}} </a><button type="button" name="lock" class="btn {{#if userlock}}btn-danger{{else}}btn-success{{/if}} lock btn-xs">{{#if userlock}}UNLOCK{{else}}LOCK{{/if}}</button> 
+               {{/if}}
+             -->
+              
+              
+
+              <ul class="nav pull-right">
+                <li>
+                    {{>loginButtons}}
+                </li>
+            </ul>                
+          </div>
+       </nav>
+      
+        <div class="container-fluid">       
+                  <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                     <!--  <div class="navbar">
+
+                     <a href="#menu-toggle" class="menu-toggle" id="menu-toggle"><i class="fa fa-bars"></i></a>
+                         </div> -->
+                    
+                      
+                      {{#each thisArray}}
+                        {{> yield}}
+                      {{/each}}
+                     </div> 
+                  </div> 
+                  <!-- <hr> -->
+               
+      </div>     
+    </div>
+
+    
+</div>          
 </template>
+
+
