@@ -1,17 +1,152 @@
 if (Meteor.isServer) {
 
-    Meteor.publish('local-items', function () {
+  //STANDARD
+   Meteor.publish('local-items', function () {
+        //  if (!this.userId) {
+        //     return this.ready();
+        // }
+
         return Items.find();
     })
 
     Meteor.publish('local-leds', function () {
-        return Leds.find();
+        // if (!this.userId) {
+        //     return this.ready();
+        // }
+
+        var currentuser = this.userId;
+          if (currentuser) {
+        var thisclientuser = Meteor.users.findOne(currentuser);    
+
+        if (thisclientuser.devices) {
+        var devicesmac = thisclientuser.devices.map(function(x) { return x.mac } );
+        
+
+        return Leds.find({"macAddr": {$in: devicesmac}});
+          }        
+      }
+      else {return  this.ready();}
     })
 
     Meteor.publish('local-sensors', function () {
-        return Sensors.find({},{ sort:{time: 1} });
-        // return Sensors.find({},{ limit : 500 , sort:{time: -1} });
+        //  if (!this.userId) {
+        //     return this.ready();
+        // }
+        
+        var currentuser = this.userId;
+          if (currentuser) {
+        var thisclientuser = Meteor.users.findOne(currentuser);    
+
+        if (thisclientuser.devices) {
+        var devicesmac = thisclientuser.devices.map(function(x) { return x.mac } );
+       
+
+        return Sensors.find({"macAddr": {$in: devicesmac}},{ sort:{time: 1} });
+          }
+      } 
+      else {return  this.ready();}
     })
+
+
+
+
+
+
+    Meteor.publish('localdevice-leds', function () {
+        // if (!this.userId) {
+        //     return this.ready();
+        // }
+
+        var currentuser = this.userId;
+          if (currentuser) {
+        var thisclientuser = Meteor.users.findOne(currentuser);    
+
+       
+       // var devicesmac = thisclientuser.devices.map(function(x) { return x.mac } );
+        
+
+        return Leds.find({"macAddr": thisclientuser.macAddr });
+                
+      }
+      else {return  this.ready();}
+    })
+
+    Meteor.publish('localdevice-sensors', function () {
+        //  if (!this.userId) {
+        //     return this.ready();
+        // }
+        
+        var currentuser = this.userId;
+          if (currentuser) {
+        var thisclientuser = Meteor.users.findOne(currentuser);    
+
+        
+       // var devicesmac = thisclientuser.devices.map(function(x) { return x.mac } );
+       
+
+        return Sensors.find({"macAddr": thisclientuser.macAddr},{ sort:{time: 1} });
+          
+      } 
+      else {return  this.ready();}
+    })  
+
+
+
+
+
+
+    //REACTIVE
+    //  Meteor.reactivePublish('local-items', function () {
+    //     //  if (!this.userId) {
+    //     //     return this.ready();
+    //     // }
+
+    //     return Items.find();
+    // })
+
+    // Meteor.reactivePublish('local-leds', function () {
+    //     // if (!this.userId) {
+    //     //     return this.ready();
+    //     // }
+
+    //     var currentuser = this.userId;
+    //       if (currentuser) {
+    //     var thisclientuser = Meteor.users.findOne(currentuser);    
+
+    //     if (thisclientuser.devices) {
+    //     var devicesmac = thisclientuser.devices.map(function(x) { return x.mac } );
+    //     // ( {$or : [{ _id : Meteor.userId() },{"services.facebook.id": { $in: friendid }}]})
+
+    //     return Leds.find( { $or:  [{"macAddr": thisclientuser.macAddr} ,{"macAddr": {$in: devicesmac}}]});
+
+    //      }
+    //   }
+    //   else {return  this.ready();}
+    // })
+
+    // Meteor.reactivePublish('local-sensors', function () {
+    //     //  if (!this.userId) {
+    //     //     return this.ready();
+    //     // }
+        
+    //     var currentuser = this.userId;
+    //       if (currentuser) {
+    //     var thisclientuser = Meteor.users.findOne(currentuser);    
+
+    //     if (thisclientuser.devices) {
+    //     var devicesmac = thisclientuser.devices.map(function(x) { return x.mac } );
+        
+    //     return Sensors.find({ $or:  [{"macAddr": thisclientuser.macAddr} ,{"macAddr": {$in: devicesmac}}]},{ sort:{time: 1} });
+    //     // return Sensors.find({"macAddr": {$in: devicesmac}},{ sort:{time: 1} });
+    //     // return Sensors.find({},{ limit : 500 , sort:{time: -1} });
+    //     }
+    //   } 
+    //   else {return  this.ready();}
+    // })
+
+
+
+
 
 
 
@@ -59,3 +194,111 @@ if (Meteor.isServer) {
   
 
 }
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+  //OLD publish
+
+  // Meteor.publish('local-items', function () {
+  //       //  if (!this.userId) {
+  //       //     return this.ready();
+  //       // }
+
+  //       return Items.find();
+  //   })
+
+  //   Meteor.publish('local-leds', function () {
+  //       // if (!this.userId) {
+  //       //     return this.ready();
+  //       // }
+
+  //       var currentuser = this.userId;
+  //         if (currentuser) {
+  //       var thisclientuser = Meteor.users.findOne(currentuser);    
+
+  //       if (thisclientuser.devices) {
+  //       var devicesmac = thisclientuser.devices.map(function(x) { return x.mac } );
+  //       }
+
+  //       return Leds.find({"macAddr": {$in: devicesmac}});
+  //     }
+  //     else {return  this.ready();}
+  //   })
+
+  //   Meteor.publish('local-sensors', function () {
+  //       //  if (!this.userId) {
+  //       //     return this.ready();
+  //       // }
+        
+  //       var currentuser = this.userId;
+  //         if (currentuser) {
+  //       var thisclientuser = Meteor.users.findOne(currentuser);    
+
+  //       if (thisclientuser.devices) {
+  //       var devicesmac = thisclientuser.devices.map(function(x) { return x.mac } );
+  //       }
+
+  //       return Sensors.find({"macAddr": {$in: devicesmac}},{ sort:{time: 1} });
+         
+  //     } 
+  //     else {return  this.ready();}
+  //   })
+
+
+
+  //REACTIVE PUBLISH    ----   lepozepo:reactive-publish
+   // Meteor.reactivePublish('local-items', function () {
+   //      //  if (!this.userId) {
+   //      //     return this.ready();
+   //      // }
+
+   //      return Items.find();
+   //  })
+
+   //  Meteor.reactivePublish('local-leds', function () {
+   //      // if (!this.userId) {
+   //      //     return this.ready();
+   //      // }
+
+   //      var currentuser = this.userId;
+   //        if (currentuser) {
+   //      var thisclientuser = Meteor.users.findOne(currentuser);    
+
+   //      if (thisclientuser.devices) {
+   //      var devicesmac = thisclientuser.devices.map(function(x) { return x.mac } );
+   //      }
+
+   //      return Leds.find({"macAddr": {$in: devicesmac}});
+   //    }
+   //    else {return  this.ready();}
+   //  })
+
+   //  Meteor.reactivePublish('local-sensors', function () {
+   //      //  if (!this.userId) {
+   //      //     return this.ready();
+   //      // }
+        
+   //      var currentuser = this.userId;
+   //        if (currentuser) {
+   //      var thisclientuser = Meteor.users.findOne(currentuser);    
+
+   //      if (thisclientuser.devices) {
+   //      var devicesmac = thisclientuser.devices.map(function(x) { return x.mac } );
+   //      }
+
+   //      return Sensors.find({"macAddr": {$in: devicesmac}},{ sort:{time: 1} });
+   //      // return Sensors.find({},{ limit : 500 , sort:{time: -1} });
+   //    } 
+   //    else {return  this.ready();}
+   //  })

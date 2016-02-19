@@ -15,6 +15,7 @@
 
 .container-fluid {
 	margin-top: 20px;
+    padding-top: 20px;
 }
 
 .accounts-dialog {
@@ -245,9 +246,9 @@ label {
     padding: 10px 0;
 }
 
-.row:last-child {
+/*.row:last-child {
     margin-top: 20px;
-}
+}*/
 
 ul.notifications {
 position: fixed;
@@ -333,6 +334,8 @@ position: fixed;
     width: 100%;
     position: absolute;
     padding: 15px;
+    padding-left: 0px;
+    padding-right: 0px;
 }
 
 #wrapper.toggled #page-content-wrapper {

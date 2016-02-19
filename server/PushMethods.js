@@ -63,8 +63,8 @@ Meteor.methods({
             if (!error) {
                 Push.send({
                     from: 'push',
-                    title: 'Treatment Plan done',
-                    text: 'This notification has been sent from the SERVER',
+                    title: 'Sensor DHT-11',
+                    text: 'Humidity very high over 55%',
                     badge: badge,
                     payload: {
                         title: 'Treatment Plan Done',

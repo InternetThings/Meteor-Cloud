@@ -78,13 +78,24 @@ Meteor.startup(function () {
 });
 
 //REGISTER BACK BUTTON DEVICE SENSOR BUTTON EVENT === TESTED AND WORK VERY GOOD ON ANDROID
-if(Meteor.isCordova){
+// if(Meteor.isCordova){
+//   Meteor.startup(function(){
+//     document.addEventListener("backbutton", function(){
+//       if (history.state && history.state.initial === true) {
+//         navigator.app.exitApp();
+//       } else {
+//         history.go(-1);
+//       }
+//     });
+//   });
+// }
+
+if(Meteor.isCordova || Meteor.isMobile){
   Meteor.startup(function(){
     document.addEventListener("backbutton", function(){
-      if (history.state && history.state.initial === true) {
+       var message = "Did you want to exit?";
+       if (confirm(message)) {
         navigator.app.exitApp();
-      } else {
-        history.go(-1);
       }
     });
   });
@@ -167,12 +178,15 @@ Template.main.helpers({
         
        // return UserConnection.find({ $or : [ { _id : "GENERAL-PLAN"} , { userId : Meteor.userId() }  ] } );  
        // return UserConnection.find({ $or : [ { _id : "GENERAL-PLAN"} , { userId : Meteor.userId() }  ] } );  
+        // ( {$or : [{ _id : Meteor.userId() },{"services.facebook.id": { $in: friendid }}]})
+
 
         // var userdevices = Meteor.users.find({"macAddr": {$exists: true}}).fetch();
         
-        var userdevices = Meteor.users.find({$and: [{"macAddr": {$exists: true}}, {"macAddr": {$in: devicesmac}}]}).fetch();
+        // var userdevices = Meteor.users.find({ $and: [ {"macAddr": {$exists: true}}  ,{$or: [{"macAddr": thisclientuser.macAddr}, {"macAddr": {$in: devicesmac}}]}]}).fetch();
+        var userdevices = Meteor.users.find({$and: [{"macAddr": {$exists: true}}, {"macAddr": {$in:   devicesmac}}]}).fetch();
         console.log(userdevices);
-
+ 
 
        // var userdevices = UserConnection.find({"macAddr": $in: {devicesmac}}).fetch();
 

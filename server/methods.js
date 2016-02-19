@@ -15,7 +15,12 @@ Meteor.methods({
     },
 
     serversensordata: function(item) {
+
+         var _temp = Sensors.findOne({_id: item._id});
+        if (!_temp) {    
+
         Sensors.insert(item);
+    }
     },
 
     setconnmac: function(macAddr, gatewayid) {
