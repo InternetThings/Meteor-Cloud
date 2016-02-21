@@ -15,7 +15,7 @@ Meteor.methods({
             title: title,
             text: text,
             badge: badge,
-            sound: 'airhorn.caf',
+            // sound: 'airhorn.caf',
             payload: {
                 title: title,
                 text:text,
@@ -82,5 +82,179 @@ Meteor.methods({
                 console.log("All history removed");
             }
         });
+    },
+
+    deletenotificationrule: function(id) {
+
+      return  NotificationRule.remove(id);
+    },
+
+    activatenotificationrule: function(id) {
+        return NotificationRule.update(id , {$set: {"pending": true , "addedAt": new Date()}});
+    },
+
+
+
+
+     customNotification: function (text,title,userId, macAddr, sensor, operator, targetValue) {  
+        var last = NotificationHistory.findOne({}, {sort: {addedAt: -1}});
+        var badge = 1
+        if (last != null) {
+            badge = last.badge + 1;
+        }
+
+        NotificationHistory.insert({
+            badge: badge,
+            addedAt: new Date(),
+            userId: userId,
+            text: text,
+            title: title,
+            macAddr: macAddr,
+            sensor: sensor,
+            operator: operator,
+            value: targetValue
+        }, function (error, result) {
+            if (!error) {
+                Push.send({
+                    from: 'push',
+                    title: title,
+                    text: text,
+                    badge: badge,
+                    payload: {
+                        title: title,
+                        historyId: result
+                    },
+                    query: { 
+                     userId: userId
+                 }
+                });
+                
+            }
+        });
     }
+
 });
+
+
+
+Sensors.find().observe({
+    added: function (item) {
+        // console.log('-- local sensor added--');
+        // console.log(item);
+
+        var find = NotificationRule.find({$and: [  {"macAddr": item.macAddr} ,  {"addedAt": { $lt: item.time } } , {"pending": true}     ]}).fetch();         
+        // console.log(find);
+
+        if (find) {
+
+            find.forEach(function(notification) {
+
+                    // console.log("FOR EACH");
+                    // console.log(notification);
+                    // console.log("THE ADDED ITEM");
+                    // console.log(item);
+
+
+                    if (notification.sensor == 'humidity' ) {
+                        // console.log("HUMIDITY");
+
+                            if(  eval(item.humidity  +  notification.operator + notification.targetValue)   )   {
+                                    // console.log("TRIGGER TRUE");
+                                     Meteor.call('customNotification', notification.message, notification.title, notification.userId, notification.macAddr ,notification.sensor, notification.operator, notification.targetValue);   
+
+                                     NotificationRule.update(notification._id , {$set:{"pending": false}});   
+                                     
+                            } 
+                            else { 
+                                    // console.log("TRIGGER FALSE");
+                            }
+                    }
+
+                    if (notification.sensor == 'temperature') {
+                        // console.log("TEMPERATURE");
+
+                            if(  eval(item.temperature  +  notification.operator + notification.targetValue)   )   {
+                                    // console.log("TRIGGER TRUE");
+                                     Meteor.call('customNotification', notification.message, notification.title, notification.userId, notification.macAddr ,notification.sensor, notification.operator, notification.targetValue);   
+
+                                     NotificationRule.update(notification._id , {$set:{"pending": false}});   
+                                     
+                            } 
+                            else { 
+                                    // console.log("TRIGGER FALSE");
+                            }
+
+                    }
+            }); 
+
+        }
+
+    }
+    // ,
+    // removed: function (item) {
+    //     console.log('-- local sensor removed--');
+    //     console.log(item);
+
+             
+    // }
+});
+
+
+
+ // var userdevices = Meteor.users.find({$and: [{"macAddr": {$exists: true}}, {"macAddr": {$in:   devicesmac}}]}).fetch();
+
+
+  // var friendsmarkers = Markers.find( { facebook : { $in: friendid }}).fetch(); 
+  //             console.log(friendsmarkers);
+     
+  //             if (friendsmarkers) {
+
+  //                 friendsmarkers.forEach(function(newDocument) {
+  //                    if (!markers[newDocument.userId]){ 
+  //                    // if (!markers[id]){    
+  //                      var friendspic = Meteor.users.findOne({"services.facebook.id": "newDocument.facebook" });
+  //                        console.log(friendspic);  
+  //                     marker = new google.maps.Marker({
+  //                     animation: google.maps.Animation.DROP,
+  //                     position: new google.maps.LatLng(newDocument.latLng.lat, newDocument.latLng.lng),
+  //                     map: map.instance,
+  //                     id: id,
+  //                     icon: newDocument.icon
+  //                     });
+  //                       markers[id] = marker;
+  //                 console.log('new friend marker added' + marker.id);
+  //                 console.log(markers); 
+
+
+  //                       }
+  //                 }); 
+                   
+
+                    
+  //             }
+
+
+//  {
+//     "_id" : ObjectId("56c88c97c58cb4e3775ffab6"),
+//     "humidity" : 33,
+//     "name" : "DHT11 SENSOR 1",
+//     "temperature" : 24,
+//     "macAddr" : "c4:54:44:84:70:b4",
+//     "time" : ISODate("2016-02-20T16:45:20.750Z")
+// }
+
+
+
+
+// {
+//     "_id" : "KihuofMn8cRMgaJhN",
+//     "title" : "Home Kitchen",
+//     "message" : "Temperature too low",
+//     "sensor" : "temperature",
+//     "operator" : "<",
+//     "targetValue" : "24",
+//     "pending" : true,
+//     "macAddr" : "c4:54:44:84:70:b4",
+//     "addedAt" : ISODate("2016-02-20T15:27:20.750Z"),
+//     "userId" : "kTW9c7Zuah3D2FuwK"
+// }

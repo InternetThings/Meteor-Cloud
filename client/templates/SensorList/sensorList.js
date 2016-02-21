@@ -21,6 +21,8 @@ if (Meteor.isClient) {
 // });
 
 
+    
+
 
     Template.sensorList.events({
         'click a.insert': function (e) {
@@ -31,7 +33,7 @@ if (Meteor.isClient) {
             e.preventDefault();
             Meteor.call('delete');
         },
-         'click .btn':   _.debounce(function(e) {
+         'click .led':   _.debounce(function(e) {
             e.preventDefault();          
             pinled = Leds.findOne(this._id);
             console.log(pinled);           
@@ -42,6 +44,26 @@ if (Meteor.isClient) {
             e.preventDefault();
            Router.go('/allsensor',   Sensors.find());
         },
+
+        'click .deletenotificationrule' : function(e) {
+             e.preventDefault();
+             console.log(this._id);
+             console.log(this.sensor);
+             Meteor.call('deletenotificationrule', this._id);
+        },
+
+        'click .activatenotificationrule' : function(e) {
+             e.preventDefault();
+             
+             Meteor.call('activatenotificationrule', this._id);
+        }
+
+        
+
+
+
+
+
 
     });
 
@@ -63,6 +85,10 @@ if (Meteor.isClient) {
             return Sensors.find({"macAddr": this.macAddr},{ limit : 6 , sort:{time: -1} });
         },
 
+        pendinglist: function() {
+            return NotificationRule.find({ "macAddr": this.macAddr});
+        }
+
     });
 	
 	// Deps.autorun(function(c) {
@@ -77,3 +103,158 @@ if (Meteor.isClient) {
 }
 
 
+
+
+// devices: function() {
+
+//          if ( Meteor.user()) {
+//         var thisclientuser = Meteor.users.findOne(Meteor.userId());    
+
+//         if (thisclientuser.devices) {
+//         var devicesmac = thisclientuser.devices.map(function(x) { return x.mac } );
+        
+//        // return UserConnection.find({ $or : [ { _id : "GENERAL-PLAN"} , { userId : Meteor.userId() }  ] } );  
+//        // return UserConnection.find({ $or : [ { _id : "GENERAL-PLAN"} , { userId : Meteor.userId() }  ] } );  
+//         // ( {$or : [{ _id : Meteor.userId() },{"services.facebook.id": { $in: friendid }}]})
+
+
+//         // var userdevices = Meteor.users.find({"macAddr": {$exists: true}}).fetch();
+        
+//         // var userdevices = Meteor.users.find({ $and: [ {"macAddr": {$exists: true}}  ,{$or: [{"macAddr": thisclientuser.macAddr}, {"macAddr": {$in: devicesmac}}]}]}).fetch();
+//         var userdevices = Meteor.users.find({$and: [{"macAddr": {$exists: true}}, {"macAddr": {$in:   devicesmac}}]}).fetch();
+//         console.log(userdevices);
+ 
+
+//        // var userdevices = UserConnection.find({"macAddr": $in: {devicesmac}}).fetch();
+
+//        return userdevices;
+
+//        }
+
+
+//       }
+    
+//   },
+
+
+
+
+Template.CreateNotificationRule.onCreated(function() {
+
+        Session.set('conditions', []);
+        Session.setDefault('selectedSensor', undefined);
+        Session.setDefault('selectedOperator', undefined);
+        Session.setDefault('selectedRuleset', undefined);
+
+
+    });
+
+
+
+
+Template.CreateNotificationRule.helpers({
+
+        sensortype: function() {
+
+            var current = Router.current();
+
+
+            var thisdevice = Meteor.users.findOne(current.params._id);
+            console.log(thisdevice);
+                if (thisdevice.sensors) {
+
+                    var devicesensortype = thisdevice.sensors.map(function(x) {return x.type});
+                    console.log(devicesensortype);
+                    return devicesensortype;
+                }
+
+        },
+
+
+        'selectedSensor': function() {
+        
+            return  Session.get('selectedSensor') ;
+       
+    },
+
+    'selectedOperator': function() {
+        return Session.get('selectedOperator');
+    },
+
+     'operatorList': function() {
+        // var operatorList = ['>', '<', '>=', '<=', '=', '!='];
+        var operatorList = ['>', '<', '>=', '<=', '==', '!='];
+        var index = operatorList.indexOf(Session.get('selectedOperator'));
+        if (index !== -1) {
+            operatorList.splice(index, 1);
+        }
+        return operatorList;
+    },
+
+
+
+});
+
+
+
+Template.CreateNotificationRule.events({
+
+ // NEW PART  
+
+
+         'click .operatorItem': function(event) {
+        event.preventDefault();
+        Session.set('selectedOperator', event.currentTarget.id);
+        },
+
+        'click .sensorItem': function(event) {
+            event.preventDefault();
+            Session.set('selectedSensor', event.currentTarget.id);
+            console.log(Session.get('selectedSensor'));
+        },
+
+        'click #SaveRuleSetbtn': function(event) {
+        event.preventDefault();
+        var title = $('#title').val();
+        title = title.replace(/\w\S*/g, function(txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        });
+        var message = $('#message').val();
+        message = message.charAt(0).toUpperCase() + message.substr(1);
+
+        var sensor = Session.get('selectedSensor');
+        var operator = Session.get('selectedOperator');
+        var targetValue = $('#targetValue').val();
+
+        var current = Router.current();
+        var thisdevice = Meteor.users.findOne(current.params._id);
+
+        // var list_of_conditions = Session.get('conditions');
+
+        Meteor.call('CreateNotificationRule', title, message, sensor, operator, targetValue, thisdevice.macAddr ,function(error, rulesetId) {
+            if (error) {
+                Session.set('error-text', error.reason);
+            }
+            else {
+                $('#message').val("");
+                $('#title').val("");
+                $('#targetValue').val("");
+                Session.set('conditions', []);
+                Session.set('selectedRuleset', rulesetId);
+                }
+            });
+        },
+
+        // THE PART FOR THE PENDING NOTIFICATION LIST
+
+        //  'click .rulesetItem': function(event) {
+        // event.preventDefault();
+        // Session.set('selectedRuleset', event.currentTarget.id);
+        // }
+
+
+
+});
+
+
+ // var graphdev = Meteor.users.findOne({_id: current.params._id});

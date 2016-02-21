@@ -1,5 +1,10 @@
 Template.landing.helpers({
 
+        notificationsinfo: function() {
+
+            return NotificationHistory.find({"userId": Meteor.userId()}, { limit:5 , sort:{ addedAt: -1}}).fetch();
+        }    
+
         // friends : function() {
         //     if (Meteor.userId()) {
     

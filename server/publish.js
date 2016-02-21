@@ -9,6 +9,25 @@ if (Meteor.isServer) {
         return Items.find();
     })
 
+   Meteor.publish('local-notifications', function () {
+         if (!this.userId) {
+            return this.ready();
+        }
+
+        // TO NOT FORGET TO FILTER NOTIFICATIONS BY USERID
+        return NotificationHistory.find({"userId": this.userId});
+    })
+
+
+   Meteor.publish('local-notifications-rules', function () {
+         if (!this.userId) {
+            return this.ready();
+        }
+
+        
+        return NotificationRule.find({"userId": this.userId});
+    })
+
     Meteor.publish('local-leds', function () {
         // if (!this.userId) {
         //     return this.ready();
@@ -41,7 +60,8 @@ if (Meteor.isServer) {
         var devicesmac = thisclientuser.devices.map(function(x) { return x.mac } );
        
 
-        return Sensors.find({"macAddr": {$in: devicesmac}},{ sort:{time: 1} });
+        // return Sensors.find({"macAddr": {$in: devicesmac}},{fields: {$nin: {humidity} }},{ sort:{time: 1} });
+         return Sensors.find({"macAddr": {$in: devicesmac}},{limit : 600 , sort:{time: -1} });
           }
       } 
       else {return  this.ready();}

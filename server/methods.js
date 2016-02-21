@@ -38,6 +38,66 @@ Meteor.methods({
 
     },
 
+    // FOR WIRELESS PART THE SENSOR NEED TO HAVE AS WELL SOME KIND OF ID !!!!!    ---    THE PURPOSE WILL BE TO BE ABLE TO REMOVE SENSORS AS WELL
+    SetGatewaySensor: function(name, type, gatewayid) {
+        console.log("THE GATAWAY MAC AND CONN USERID");
+        console.log(name);
+        console.log(type);
+        console.log(gatewayid);
+
+        var conn = Meteor.users.findOne(gatewayid);
+         console.log(conn._id);
+
+
+       
+       return Meteor.users.update(gatewayid, {$push: { sensors :{"name": name , "type":  type}}});
+
+              
+    },
+
+    CreateNotificationRule: function(title, message, sensor, operator, targetValue, macAddr) {
+            //  NEED TO ADD SENSOR ID IN FUTURE WHEN WIRELESS PART IS READY !!!!!
+            console.log(title);
+            console.log(this.userId);
+            console.log(operator);
+            console.log(macAddr);
+
+
+
+             if (Meteor.userId()) {
+
+            var newRuleSet = {
+                title: title,
+                message: message,
+                sensor: sensor,
+                operator: operator,
+                targetValue: targetValue,
+                pending: true,
+                macAddr: macAddr,
+                addedAt: new Date(),
+                userId: Meteor.userId()
+            }
+            try {
+                ValidateRuleSet(newRuleSet);
+                var rulesetId = NotificationRule.insert(newRuleSet);
+                return rulesetId;
+            }
+            catch (error) {
+                throw new Meteor.Error('Error', error.message);
+            }
+        }
+        else {
+            throw new Error('User must be logged in');
+        }
+    
+
+
+
+
+
+    },
+
+
     controlcreate: function(macAddr, pin, name) {
 
         // var userdevices = UserConnections.find({$and: [{"macAddr": {$exists: true}}, {"macAddr": {$in: devicesmac}}]}).fetch();
