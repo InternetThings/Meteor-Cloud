@@ -49,7 +49,14 @@ if (Meteor.isClient) {
              e.preventDefault();
              console.log(this._id);
              console.log(this.sensor);
-             Meteor.call('deletenotificationrule', this._id);
+
+             var message = "Delete this rule?";
+       if (confirm(message)) {
+        Meteor.call('deletenotificationrule', this._id);
+      }
+
+
+             
         },
 
         'click .activatenotificationrule' : function(e) {
