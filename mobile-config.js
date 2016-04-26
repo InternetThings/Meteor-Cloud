@@ -7,8 +7,8 @@ App.info({
   description: 'IoT Smart House based on DDP protocol and Meteor server',
   author: 'Atanas Antonov',
   email: 'eferwe@gmail.com',
-  website: 'http://testddp.meteor.com',
-  version: '0.1.5'
+  website: 'http://smartag.meteorapp.com',
+  version: '1.4.5'
 });
 
 // App.accessRule('http://treatment.meteor.com');

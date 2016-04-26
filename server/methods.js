@@ -111,16 +111,119 @@ Meteor.methods({
             
     },
 
+    systemcontrolcreate: function(macAddr) {
+        if (this.userId) {
+
+                var existled = Leds.findOne({$and: [{"macAddr": macAddr}, {"system": true}, {"device": this.userId}]});
+                if(! existled) {
+                Leds.insert({"system": true , "macAddr": macAddr, "device": this.userId});
+            }
+
+
+        }
+
+    },
+
+    systemonboot: function(macAddr) {
+        this.unblock();
+         if (this.userId) {
+            
+
+           var existled = Leds.findOne({$and: [{"macAddr": macAddr}, {"system": true}, {"device": this.userId}]});
+        if (existled) {
+             
+            Leds.update(existled._id, {$set: { userId: this.userId, message: "Up and running" , time : new Date(), command: "", device: this.userId}});
+        }
+
+
+         }
+
+    },
+
+    systemfail: function(macAddr) {
+        this.unblock();  
+         if (this.userId) {
+              
+           var existled = Leds.findOne({$and: [{"macAddr": macAddr}, {"system": true}, {"device": this.userId}]});
+        if (existled) {
+            
+            Leds.update(existled._id, {$set: { userId: this.userId, message: "System fail -- restart the hardware" , time : new Date(), command: 0, device: this.userId}});
+        }
+
+
+         }
+
+    },
+
+    devicerestart: function(macAddr) {
+        this.unblock();
+         if (this.userId) {
+            
+                // More complex and secure check need to be impelmeted in future !!!!!!
+                // TO ADD && CONDITION FOR THE macAddr to be into the user devices list!!!!!!!!!
+           var existled = Leds.findOne({$and: [{"macAddr": macAddr}, {"system": true}]});
+        if (existled) {
+            
+            Leds.update(existled._id, {$set: { userId: this.userId, message: "Restarting ..." , time : new Date(), command: "device"}});
+        }
+
+
+         }
+
+    },
+
+    hardwarerestart: function(macAddr) {
+         this.unblock();
+         if (this.userId) {
+           
+                // More complex and secure check need to be impelmeted in future !!!!!!
+           var existled = Leds.findOne({$and: [{"macAddr": macAddr}, {"system": true}]});
+        if (existled) {
+            
+            Leds.update(existled._id, {$set: { userId: this.userId, message: "Hardware restarting ..." , time : new Date(), command: "hardware"}});
+        }
+
+
+         }
+
+    },
+
+    systemcheck: function(macAddr) {
+         this.unblock();
+         if (this.userId) {
+
+                // More complex and secure check need to be impelmeted in future !!!!!!
+           var existled = Leds.findOne({$and: [{"macAddr": macAddr}, {"system": true}]});
+        if (existled) {
+            
+            Leds.update(existled._id, {$set: { userId: this.userId, message: "Awating hardware ..." , time : new Date(), command: "check"}});
+        }
+
+
+         }
+
+    },
+
     devicesadd: function(name, macAddr) {    
 
             Meteor.users.update(this.userId ,  {$push: { devices :{"name": name , "mac":  macAddr}}})
 
-     }       
+     },       
     // ,
 
     // getconnid: function(connection) {
 
     //     return 
+    // }
+
+    // sensorssubs: function(ID) {
+    //     this.unblock();
+    //   return  Meteor.subscribe('device-sensors', ID);
+    // },
+
+    // devicessubs: function(ID) {
+    //     this.unblock();
+    //  return   Meteor.subscribe('device-controls', ID);
     // }
 
 });

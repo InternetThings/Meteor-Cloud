@@ -2,15 +2,28 @@
 
 <template name="sensorList">
   <div class="container">
-    <div class="well frame">
-    Cloud Server  
 
+    {{#if Template.subscriptionsReady}}
+
+    <div class="well frame">
+    <h2 class="text-center">Device --> {{#if macAddr}} {{this.macAddr}} {{/if}}</h2> 
+     <div class="row">
+    
+    <div class="col-md-6 well">
     <a href="#" class="insert">Insert</a>
     <a href="#" class="delete">Delete</a>
-    <div class="well">
     {{#each tests}}
         {{> testItem}}
     {{/each}}
+    </div>
+    <div class="col-md-6 well">
+        <h3>System:</h3>
+        <h4>Status:</h4> <h4>{{message}}</h4>
+        <hr>
+        <div class="row"><div class="col-md-6 col-lg-6 col-xs-6"><h4>restart</h4></div> <div class="col-md-6 col-lg-6 col-xs-6"><button id="device" class="btn btn-danger pull-right">device</button></div></div>
+        <div class="row"><div class="col-md-6 col-lg-6 col-xs-6"><h4>restart</h4></div> <div class="col-md-6 col-lg-6 col-xs-6"><button id="python" class="btn btn-danger pull-right">python</button></div></div>
+        <div class="row"><div class="col-md-6 col-lg-6 col-xs-6"><h4>system</h4></div> <div class="col-md-6 col-lg-6 col-xs-6"><button id="check" class="btn btn-danger pull-right">check</button></div></div>
+    </div>
     </div>
     </div>
 
@@ -47,7 +60,7 @@
     </div>
     </div>
 
-    <div class="well frame">
+    <div class="well frame" id="wellChart">
     {{> lineChartTemp}}
     </div>
 
@@ -73,15 +86,59 @@
     <!-- <div class="well ">
     {{> humidityTemp}}
     </div> -->
+
+    {{else}}
+        <div class="loading"> 
+            <!-- <p><i class="fa fa-refresh fa-spin"> </i></p> -->
+            <p><i class="fa fa-spinner fa-pulse"></i></p>
+            <p>Loading...</p>
+
+        </div>
+            <img src="/img/SmartHouseBig.png" class="loading-app img-responsive img-rounded" /> 
+
+    {{/if}}
+
      
  </div>    
 </template>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <template name="testItem">
     <li>
         {{name}}, {{author}}, {{status}}
     </li>
 </template>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <template name="testled"> 
 
@@ -112,6 +169,23 @@
      
 </template>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <template name="testsensor"> 
          
             <h3>Sensor: {{name}}</h3>
@@ -123,6 +197,20 @@
             <h4>Time: {{time}} </h4>
          
 </template>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <template name="listsensor">
     
@@ -281,6 +369,21 @@
         
     </div> -->
 </template>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

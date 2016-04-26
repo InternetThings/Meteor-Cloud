@@ -20,8 +20,38 @@ if (Meteor.isClient) {
 //   // });
 // });
 
+    Template.sensorList.onCreated(function() {
+           
+           var self =  this;
 
-    
+          // Meteor.defer(function() {
+           self.autorun(function(){
+            
+            
+                     self.subscribe('device-sensors', Router.current().params._id);
+                    self.subscribe('device-controls', Router.current().params._id);
+
+           
+           
+          
+           // Meteor.call('sensorssubs' , Router.current().params._id);
+           // Meteor.call('devicessubs' , Router.current().params._id);
+
+           })
+            // });
+        //console.log(this.macAddr);
+                var current = Router.current();
+                var graphdev = Meteor.users.findOne({_id: current.params._id});
+          Meteor.call('systemcheck', graphdev.macAddr, function(error, result){
+            console.log(result);
+          });
+    });    
+
+    // Template.sensorList.onDestroyed(function() {
+           
+    //        var self =  this;
+    //        self.stop();
+    // }); 
 
 
     Template.sensorList.events({
@@ -59,6 +89,37 @@ if (Meteor.isClient) {
              
         },
 
+        'click #device' : function(e) {
+             e.preventDefault();
+              var message = "Restart the device?";
+            if (confirm(message)) {
+                var current = Router.current();
+                var graphdev = Meteor.users.findOne({_id: current.params._id});
+             Meteor.call('devicerestart' , graphdev.macAddr);
+             }    
+        },
+
+        'click #python' : function(e) {
+             e.preventDefault();
+             var message = "Restart the hardware?";
+            if (confirm(message)) { 
+               var current = Router.current();
+                var graphdev = Meteor.users.findOne({_id: current.params._id}); 
+             Meteor.call('hardwarerestart', graphdev.macAddr );
+            }
+        },
+
+        'click #check' : function(e) {
+             e.preventDefault();
+             var message = "Check the hardware?";
+            if (confirm(message)) {
+                var current = Router.current();
+                var graphdev = Meteor.users.findOne({_id: current.params._id}); 
+             Meteor.call('systemcheck', graphdev.macAddr);
+            }
+        },
+
+
         'click .activatenotificationrule' : function(e) {
              e.preventDefault();
              
@@ -79,21 +140,29 @@ if (Meteor.isClient) {
             return Items.find();
         },
          controls: function() {
-            return Leds.find({"macAddr": this.macAddr});
+            // return Leds.find({"macAddr": this.macAddr});
+             return Leds.find({"system": {$exists: false}});
         },
 
         sensors: function() {
           var tempo = this.macAddr;
             console.log(tempo);
             return Sensors.find({"macAddr": this.macAddr},{ limit : 1 , sort:{time: -1} });
+             // return Sensors.find({},{ limit : 1 , sort:{time: -1} });
         },
 
         sensorslist:  function() {
             return Sensors.find({"macAddr": this.macAddr},{ limit : 6 , sort:{time: -1} });
+            // return Sensors.find({},{ limit : 6 , sort:{time: -1} });
         },
 
         pendinglist: function() {
             return NotificationRule.find({ "macAddr": this.macAddr});
+        },
+
+        message: function() {               
+                var control = Leds.findOne({"system": {$exists: true}});
+            return control.message;
         }
 
     });

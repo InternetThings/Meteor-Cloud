@@ -67,7 +67,36 @@ if (Meteor.isServer) {
       else {return  this.ready();}
     })
 
+    Meteor.publish('device-sensors' , function(ID) {
+        check(ID, String);
+        if (! this.userId) {
+          return this.ready();
+        }
 
+        if (ID) {
+          var subs =  Meteor.users.findOne(ID);
+         return Sensors.find({"macAddr": subs.macAddr},{ limit : 100 ,sort:{time: -1} });
+        }
+        else {
+          return this.stop();
+        }
+
+
+    })
+
+    Meteor.publish('device-controls' , function(ID)   {
+        check(ID, String);
+         if (! this.userId) {
+          return this.ready();
+        }
+        if (ID) {
+        var subs =  Meteor.users.findOne(ID);
+        return Leds.find({"macAddr": subs.macAddr});
+         }
+        else {
+          return this.stop();
+        }
+    })
 
 
 

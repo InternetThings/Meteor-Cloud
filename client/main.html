@@ -26,7 +26,7 @@
 
         <div class="list-todos">
             {{#each devices}}
-                  <li class="wiped facebook"> <a class="list-todo {{activePlanClass}} hashroot" title="{{macAddr}}"><img class="radius" src="/img/devicepic.png"> {{macAddr}} </a></li> 
+                  <li class="wiped facebook"> <a href="{{pathFor 'sensorList'}}" class="list-todo {{activePlanClass}} hashroot" title="{{macAddr}}"><img class="radius" src="/img/devicepic.png"> {{macAddr}} </a></li> 
                   <!-- <li class="wiped facebook"> <a class="list-todo {{activePlanClass}} hashroot" title="{{macAddr}}"> {{name}} </a></li>   -->         
                
             {{/each}}

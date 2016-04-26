@@ -343,7 +343,7 @@ Template.main.events({
      'click a.hashroot'  : function() {
     
        // Router.go('plansShow', {_id : this._id} ,  {hash: this.hash });
-        Router.go('sensorList', {_id : this._id} );
+       // Router.go('sensorList', {_id : this._id} );
       console.log(this._id);
      
       },

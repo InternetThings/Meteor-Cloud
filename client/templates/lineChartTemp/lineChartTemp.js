@@ -39,32 +39,58 @@ Template.lineChartTemp.events({
 
 Template.lineChartTemp.rendered = function(){
 	
-	if(Meteor.isMobile || Meteor.isCordova) {
-		console.log("Chart detect CORDOVA");
-		var margin = {top: 20, right: 45, bottom: 30, left: 35},
+	// if(Meteor.isMobile || Meteor.isCordova) {
+	// 	console.log("Chart detect CORDOVA");
+	// 	var margin = {top: 20, right: 45, bottom: 30, left: 35},
 
-		ww = document.getElementById("lineChart").clientWidth,
+	// 	ww = document.getElementById("lineChart").clientWidth,
+	// 	width = ww - margin.left - margin.right,
+	// 	height = 400 - margin.top - margin.bottom;
+
+	// 	// width = 600 - margin.left - margin.right,
+	// 	// height = 400 - margin.top - margin.bottom;
+
+	// }
+	// else {
+	// 	//Width and height
+	// 	var margin = {top: 20, right: 20, bottom: 30, left: 50},
+	// 	// ww = document.getElementById("lineChart").clientWidth,
+	// 	// width = ww - margin.left - margin.right,
+	// 	// height = 400 - margin.top - margin.bottom;
+
+
+	// 	width = 1100 - margin.left - margin.right,
+	// 	height = 400 - margin.top - margin.bottom;
+
+
+
+	// }
+
+	var ww = {};
+
+	if (window.matchMedia("(orientation: portrait)").matches) {
+   // you're in PORTRAIT mode
+   		ww = document.getElementById("wellChart").clientWidth
+	}
+
+	if (window.matchMedia("(orientation: landscape)").matches) {
+	  // you're in LANDSCAPE mode
+	  	ww = document.getElementById("wellChart").clientWidth
+	}
+
+
+
+
+	var margin = {top: 20, right: 45, bottom: 30, left: 35},
+
+		
 		width = ww - margin.left - margin.right,
-		height = 400 - margin.top - margin.bottom;
 
-		// width = 600 - margin.left - margin.right,
-		// height = 400 - margin.top - margin.bottom;
-
-	}
-	else {
-		//Width and height
-		var margin = {top: 20, right: 20, bottom: 30, left: 50},
-		// ww = document.getElementById("lineChart").clientWidth,
-		// width = ww - margin.left - margin.right,
-		// height = 400 - margin.top - margin.bottom;
-
-
-		width = 1100 - margin.left - margin.right,
 		height = 400 - margin.top - margin.bottom;
 
 
 
-	}
+
 
 	var formatDate = d3.time.format("%c");	
 
@@ -144,7 +170,7 @@ Template.lineChartTemp.rendered = function(){
 // Template.lineChartTemp.onRendered = function(){
 
 
-	
+	Meteor.defer(function() {
 	Deps.autorun(function(){
 		var current = Router.current();
 	    // if (current.route.name === 'sensorList' && current.params._id === this._id) {
@@ -157,12 +183,12 @@ Template.lineChartTemp.rendered = function(){
 
 
 	    if( Meteor.isCordova || Meteor.isMobile) {
-
-	    	var dataset = Sensors.find({"macAddr": graphdev.macAddr},{ limit : 30 , sort:{time:-1}}).fetch()
+	    	// var dataset = Sensors.find({},{ limit : 30 , sort:{time:-1}}).fetch();	
+	    	var dataset = Sensors.find({"macAddr": graphdev.macAddr},{ limit : 30 , sort:{time:-1}}).fetch();
 
 	    } else {
-
-	    	var dataset = Sensors.find({"macAddr": graphdev.macAddr},{ limit : 600 , sort:{time:-1}}).fetch()
+	    	// var dataset = Sensors.find({},{ limit : 60 , sort:{time:-1}}).fetch();	
+	    	var dataset = Sensors.find({"macAddr": graphdev.macAddr},{ limit : 100 , sort:{time:-1}}).fetch();
 	    		
 	    }
 
@@ -201,5 +227,6 @@ Template.lineChartTemp.rendered = function(){
 		paths
 			.exit()
 			.remove();
+	});
 	});
 };

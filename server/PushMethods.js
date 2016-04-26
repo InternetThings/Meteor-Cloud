@@ -95,7 +95,7 @@ Meteor.methods({
 
 
 
-
+    //NEED TO MOVE THIS PART OUT OF METHODS TO DIRECT FUNCTION INTO THE OBSERVATION CURSOR BELOW FOR SECURE REASONS !!!
      customNotification: function (text,title,userId, macAddr, sensor, operator, targetValue) {  
         var last = NotificationHistory.findOne({}, {sort: {addedAt: -1}});
         var badge = 1
@@ -135,7 +135,7 @@ Meteor.methods({
 
 });
 
-
+//NEED TO TRY TO PLACE THE var find OUTSIDE OF THE observe FUNCTION!!! IN ORDER TO SPEED THE DEPLOYMENT TO THE GALAXY IN FUTURE !!!!!!!!!
 
 Sensors.find().observe({
     added: function (item) {
